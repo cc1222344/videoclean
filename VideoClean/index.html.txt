@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoClean Pro</title>
+    <style>
+        /* 设置背景渐变 */
+        body {
+            background: linear-gradient(135deg, #1D2B64, #F8Cdda);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        input, button {
+            padding: 15px;
+            margin: 10px;
+            width: 80%;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input {
+            background-color: #fff;
+            color: #333;
+            font-size: 16px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
+            transform: scale(1.1);
+        }
+
+        .upload-btn {
+            background: #3b82f6;
+        }
+
+        .upload-btn:hover {
+            background: #1d63b6;
+        }
+
+        .input-container {
+            margin: 10px;
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: none;
+            font-size: 20px;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>VideoClean Pro</h1>
+
+    <!-- 视频下载部分 -->
+    <div class="card">
+        <h3>视频下载</h3>
+        <form action="/download" method="POST" id="download-form">
+            <input type="text" name="url" placeholder="粘贴视频链接" required>
+            <button type="submit">下载视频</button>
+        </form>
+        <div id="download-loading" class="loading">正在下载视频，请稍候...</div>
+    </div>
+
+    <!-- 去水印处理部分 -->
+    <div class="card">
+        <h3>去水印处理</h3>
+        <form action="/process" method="POST" enctype="multipart/form-data" id="process-form">
+            <div class="input-container">
+                <input type="file" name="video" required>
+            </div>
+            <button type="submit" class="upload-btn">上传并处理</button>
+        </form>
+        <div id="process-loading" class="loading">视频处理中，请稍候...</div>
+    </div>
+
+    <script>
+        // 下载视频时显示加载动画
+        document.getElementById('download-form').addEventListener('submit', function(e) {
+            document.getElementById('download-loading').classList.add('active');
+        });
+
+        // 处理视频时显示加载动画
+        document.getElementById('process-form').addEventListener('submit', function(e) {
+            document.getElementById('process-loading').classList.add('active');
+        });
+    </script>
+</body>
+</html>

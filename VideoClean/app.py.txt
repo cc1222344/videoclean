@@ -1,0 +1,60 @@
+from flask import Flask, render_template, request, send_file
+import yt_dlp
+import cv2
+import os
+
+app = Flask(__name__)
+UPLOAD_FOLDER = "uploads"
+OUTPUT_FOLDER = "outputs"
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+@app.route('/')
+def index():
+    return render_template("index.html")
+
+@app.route('/download', methods=['POST'])
+def download():
+    url = request.form['url']
+    path = os.path.join(OUTPUT_FOLDER, "video.mp4")
+
+    ydl_opts = {'outtmpl': path, 'format': 'best'}
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+
+    return send_file(path, as_attachment=True)
+
+@app.route('/process', methods=['POST'])
+def process():
+    file = request.files['video']
+    input_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    output_path = os.path.join(OUTPUT_FOLDER, "output.mp4")
+
+    file.save(input_path)
+
+    cap = cv2.VideoCapture(input_path)
+    width = int(cap.get(3))
+    height = int(cap.get(4))
+    fps = int(cap.get(5))
+
+    out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        roi = frame[height-120:height, width-200:width]
+        roi = cv2.GaussianBlur(roi, (35, 35), 0)
+        frame[height-120:height, width-200:width] = roi
+
+        out.write(frame)
+
+    cap.release()
+    out.release()
+
+    return send_file(output_path, as_attachment=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
